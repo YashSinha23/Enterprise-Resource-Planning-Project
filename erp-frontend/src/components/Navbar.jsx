@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
+  HomeIcon,
   CubeIcon,
   ClipboardDocumentListIcon,
   ArrowsRightLeftIcon,
@@ -9,20 +11,22 @@ import {
 } from "@heroicons/react/24/outline";
 
 const navigationItems = [
-  { name: "Transactions", icon: ArrowsRightLeftIcon, href: "#", active: false },
-  { name: "Orders", icon: ClipboardDocumentListIcon, href: "#", active: true },
-  { name: "Inventory", icon: CubeIcon, href: "#", active: false },
+  { name: "Home", icon: HomeIcon, href: "/", active: true },
+  { name: "Transactions", icon: ArrowsRightLeftIcon, href: "/transactions", active: false },
+  { name: "Orders", icon: ClipboardDocumentListIcon, href: "/orders", active: false },
+  { name: "Inventory", icon: CubeIcon, href: "/inventory", active: false },
 ];
 
-const adminItem = { name: "Admin", icon: UserIcon, href: "#", active: false };
+const adminItem = { name: "Admin", icon: UserIcon, href: "/admin", active: false };
 
 export function NavigationbarWithDropdownMultilevelMenu() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation(); // Get current location to determine active nav item
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm w-screen">
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-none">
+        <div className="flex items-center justify-between h-16 w-full">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
             <div className="flex items-center">
@@ -38,19 +42,20 @@ export function NavigationbarWithDropdownMultilevelMenu() {
             <div className="flex items-center space-x-8">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
+                const isActive = location.pathname === item.href;
                 return (
-                  <a
+                  <Link
                     key={item.name}
-                    href={item.href}
+                    to={item.href}
                     className={`${
-                      item.active
+                      isActive
                         ? "text-blue-600 border-b-2 border-blue-600"
                         : "text-gray-700 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
                     } px-4 py-4 text-sm font-medium flex items-center space-x-2 transition-all duration-200 border-b-2 border-transparent`}
                   >
                     <Icon className="h-5 w-5" />
                     <span>{item.name}</span>
-                  </a>
+                  </Link>
                 );
               })}
             </div>
@@ -58,17 +63,17 @@ export function NavigationbarWithDropdownMultilevelMenu() {
 
           {/* Admin - Right Side */}
           <div className="hidden md:flex items-center">
-            <a
-              href={adminItem.href}
+            <Link
+              to={adminItem.href}
               className={`${
-                adminItem.active
+                location.pathname === adminItem.href
                   ? "text-blue-600 border-b-2 border-blue-600"
                   : "text-gray-700 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
               } px-4 py-4 text-sm font-medium flex items-center space-x-2 transition-all duration-200 border-b-2 border-transparent`}
             >
               <UserIcon className="h-5 w-5" />
               <span>Admin</span>
-            </a>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -93,33 +98,36 @@ export function NavigationbarWithDropdownMultilevelMenu() {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navigationItems.map((item) => {
               const Icon = item.icon;
+              const isActive = location.pathname === item.href;
               return (
-                <a
+                <Link
                   key={item.name}
-                  href={item.href}
+                  to={item.href}
+                  onClick={() => setMobileMenuOpen(false)} // Close mobile menu on click
                   className={`${
-                    item.active
+                    isActive
                       ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600"
                       : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                   } block px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3`}
                 >
                   <Icon className="h-5 w-5" />
                   <span>{item.name}</span>
-                </a>
+                </Link>
               );
             })}
             {/* Admin in mobile menu */}
-            <a
-              href={adminItem.href}
+            <Link
+              to={adminItem.href}
+              onClick={() => setMobileMenuOpen(false)} // Close mobile menu on click
               className={`${
-                adminItem.active
+                location.pathname === adminItem.href
                   ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600"
                   : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
               } block px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3`}
             >
               <UserIcon className="h-5 w-5" />
               <span>Admin</span>
-            </a>
+            </Link>
           </div>
         </div>
       )}
