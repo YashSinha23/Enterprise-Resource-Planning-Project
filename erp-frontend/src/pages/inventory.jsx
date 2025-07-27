@@ -1,5 +1,5 @@
 import React from 'react';
-import { CubeIcon } from '@heroicons/react/24/outline';
+import { Package } from 'lucide-react';
 
 const Inventory = () => {
   return (
@@ -11,7 +11,7 @@ const Inventory = () => {
             {/* Inventory Icon */}
             <div className="flex-shrink-0">
               <div className="bg-gray-100 p-3 rounded-lg">
-                <CubeIcon className="h-8 w-8 text-gray-600" />
+                <Package className="h-8 w-8 text-gray-600" />
               </div>
             </div>
             

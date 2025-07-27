@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserIcon } from '@heroicons/react/24/outline';
+import { User } from 'lucide-react';
 
 const Admin = () => {
   return (
@@ -11,7 +11,7 @@ const Admin = () => {
             {/* Admin Icon */}
             <div className="flex-shrink-0">
               <div className="bg-gray-100 p-3 rounded-lg">
-                <UserIcon className="h-8 w-8 text-gray-600" />
+                <User className="h-8 w-8 text-gray-600" />
               </div>
             </div>
             

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import {
-  ClipboardDocumentListIcon,
-  MagnifyingGlassIcon,
-  ArrowDownTrayIcon,
-  PlusIcon,
-  PencilIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline';
+  ClipboardList,
+  Search,
+  Download,
+  Plus,
+  Edit,
+  Trash2,
+} from 'lucide-react';
 
 // Dummy data for orders table
 const dummyOrders = [
@@ -93,7 +93,7 @@ const Orders = () => {
             {/* Orders Icon */}
             <div className="flex-shrink-0">
               <div className="bg-gray-100 p-3 rounded-lg">
-                <ClipboardDocumentListIcon className="h-8 w-8 text-gray-600" />
+                <ClipboardList className="h-8 w-8 text-gray-600" />
               </div>
             </div>
             
@@ -115,7 +115,7 @@ const Orders = () => {
             <div className="flex-1 max-w-md">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                  <Search className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   type="text"
@@ -161,7 +161,7 @@ const Orders = () => {
                 onClick={handleExport}
                 className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
               >
-                <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
+                <Download className="h-4 w-4 mr-2" />
                 Export
               </button>
 
@@ -170,7 +170,7 @@ const Orders = () => {
                 onClick={handleNewOrder}
                 className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
               >
-                <PlusIcon className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4 mr-2" />
                 New Order
               </button>
             </div>
@@ -241,7 +241,7 @@ const Orders = () => {
                           className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50 transition-colors duration-150"
                           title="Edit Order"
                         >
-                          <PencilIcon className="h-4 w-4" />
+                          <Edit className="h-4 w-4" />
                         </button>
 
                         {/* Delete Button */}
@@ -250,7 +250,7 @@ const Orders = () => {
                           className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors duration-150"
                           title="Delete Order"
                         >
-                          <TrashIcon className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </td>

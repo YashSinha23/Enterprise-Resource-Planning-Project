@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  HomeIcon,
-  CubeIcon,
-  ClipboardDocumentListIcon,
-  ArrowsRightLeftIcon,
-  UserIcon,
-  Bars3Icon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+  Home,
+  Package,
+  ClipboardList,
+  ArrowRightLeft,
+  User,
+  Menu,
+  X,
+  Factory,
+} from "lucide-react";
 
 const navigationItems = [
-  { name: "Home", icon: HomeIcon, href: "/", active: true },
-  { name: "Transactions", icon: ArrowsRightLeftIcon, href: "/transactions", active: false },
-  { name: "Orders", icon: ClipboardDocumentListIcon, href: "/orders", active: false },
-  { name: "Inventory", icon: CubeIcon, href: "/inventory", active: false },
+  { name: "Home", icon: Home, href: "/", active: true },
+  { name: "Transactions", icon: ArrowRightLeft, href: "/transactions", active: false },
+  { name: "Orders", icon: ClipboardList, href: "/orders", active: false },
+  { name: "Inventory", icon: Package, href: "/inventory", active: false },
 ];
 
-const adminItem = { name: "Admin", icon: UserIcon, href: "/admin", active: false };
+const adminItem = { name: "Admin", icon: User, href: "/admin", active: false };
 
 export function NavigationbarWithDropdownMultilevelMenu() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -31,7 +32,7 @@ export function NavigationbarWithDropdownMultilevelMenu() {
           <div className="flex items-center flex-shrink-0">
             <div className="flex items-center">
               <div className="bg-blue-600 p-2 rounded-lg">
-                <CubeIcon className="h-6 w-6 text-white" />
+                <Factory className="h-6 w-6 text-white" />
               </div>
               <span className="ml-3 text-xl font-bold text-gray-900">Almed</span>
             </div>
@@ -71,7 +72,7 @@ export function NavigationbarWithDropdownMultilevelMenu() {
                   : "text-gray-700 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
               } px-4 py-4 text-sm font-medium flex items-center space-x-2 transition-all duration-200 border-b-2 border-transparent`}
             >
-              <UserIcon className="h-5 w-5" />
+              <User className="h-5 w-5" />
               <span>Admin</span>
             </Link>
           </div>
@@ -83,9 +84,9 @@ export function NavigationbarWithDropdownMultilevelMenu() {
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
             >
               {mobileMenuOpen ? (
-                <XMarkIcon className="block h-6 w-6" />
+                <X className="block h-6 w-6" />
               ) : (
-                <Bars3Icon className="block h-6 w-6" />
+                <Menu className="block h-6 w-6" />
               )}
             </button>
           </div>
@@ -125,7 +126,7 @@ export function NavigationbarWithDropdownMultilevelMenu() {
                   : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
               } block px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3`}
             >
-              <UserIcon className="h-5 w-5" />
+              <User className="h-5 w-5" />
               <span>Admin</span>
             </Link>
           </div>

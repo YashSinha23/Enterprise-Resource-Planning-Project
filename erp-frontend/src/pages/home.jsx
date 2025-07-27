@@ -1,20 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowsRightLeftIcon,
-  ClipboardDocumentListIcon,
-  CubeIcon,
-  UserIcon,
-  ChartBarIcon,
-  DocumentTextIcon,
-} from '@heroicons/react/24/outline';
+  ArrowRightLeft,
+  ClipboardList,
+  Package,
+  User,
+  BarChart3,
+  FileText,
+} from 'lucide-react';
 
 // Navigation cards data with different colors
 const navigationCards = [
   {
     title: 'Transactions',
     description: 'View and manage all financial transactions',
-    icon: ArrowsRightLeftIcon,
+    icon: ArrowRightLeft,
     href: '/transactions',
     bgColor: 'bg-gradient-to-br from-blue-500 to-blue-600',
     hoverColor: 'hover:from-blue-600 hover:to-blue-700',
@@ -23,7 +23,7 @@ const navigationCards = [
   {
     title: 'Orders',
     description: 'Complete log of customer orders and shipments',
-    icon: ClipboardDocumentListIcon,
+    icon: ClipboardList,
     href: '/orders',
     bgColor: 'bg-gradient-to-br from-green-500 to-green-600',
     hoverColor: 'hover:from-green-600 hover:to-green-700',
@@ -32,7 +32,7 @@ const navigationCards = [
   {
     title: 'Inventory',
     description: 'Manage stock levels and inventory items',
-    icon: CubeIcon,
+    icon: Package,
     href: '/inventory',
     bgColor: 'bg-gradient-to-br from-purple-500 to-purple-600',
     hoverColor: 'hover:from-purple-600 hover:to-purple-700',
@@ -41,7 +41,7 @@ const navigationCards = [
   {
     title: 'Admin',
     description: 'System administration and user management',
-    icon: UserIcon,
+    icon: User,
     href: '/admin',
     bgColor: 'bg-gradient-to-br from-orange-500 to-orange-600',
     hoverColor: 'hover:from-orange-600 hover:to-orange-700',
@@ -56,7 +56,7 @@ const quickStats = [
     value: '1,234',
     change: '+12%',
     changeType: 'positive',
-    icon: ClipboardDocumentListIcon,
+    icon: ClipboardList,
     bgColor: 'bg-green-50',
     iconColor: 'text-green-600',
   },
@@ -65,7 +65,7 @@ const quickStats = [
     value: '456',
     change: '+8%',
     changeType: 'positive',
-    icon: ArrowsRightLeftIcon,
+    icon: ArrowRightLeft,
     bgColor: 'bg-blue-50',
     iconColor: 'text-blue-600',
   },
@@ -74,7 +74,7 @@ const quickStats = [
     value: '789',
     change: '-2%',
     changeType: 'negative',
-    icon: CubeIcon,
+    icon: Package,
     bgColor: 'bg-purple-50',
     iconColor: 'text-purple-600',
   },
@@ -83,7 +83,7 @@ const quickStats = [
     value: '23',
     change: '+5%',
     changeType: 'positive',
-    icon: DocumentTextIcon,
+    icon: FileText,
     bgColor: 'bg-orange-50',
     iconColor: 'text-orange-600',
   },
