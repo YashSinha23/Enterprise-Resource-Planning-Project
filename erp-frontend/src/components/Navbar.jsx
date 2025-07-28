@@ -13,8 +13,8 @@ import {
 
 const navigationItems = [
   { name: "Home", icon: Home, href: "/", active: true },
-  { name: "Transactions", icon: ArrowRightLeft, href: "/transactions", active: false },
   { name: "Orders", icon: ClipboardList, href: "/orders", active: false },
+  { name: "Transactions", icon: ArrowRightLeft, href: "/transactions", active: false },
   { name: "Inventory", icon: Package, href: "/inventory", active: false },
 ];
 
@@ -48,11 +48,10 @@ export function NavigationbarWithDropdownMultilevelMenu() {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`${
-                      isActive
+                    className={`${isActive
                         ? "text-blue-600 border-b-2 border-blue-600"
                         : "text-gray-700 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
-                    } px-4 py-4 text-sm font-medium flex items-center space-x-2 transition-all duration-200 border-b-2 border-transparent`}
+                      } px-4 py-4 text-sm font-medium flex items-center space-x-2 transition-all duration-200 border-b-2 border-transparent`}
                   >
                     <Icon className="h-5 w-5" />
                     <span>{item.name}</span>
@@ -66,11 +65,10 @@ export function NavigationbarWithDropdownMultilevelMenu() {
           <div className="hidden md:flex items-center">
             <Link
               to={adminItem.href}
-              className={`${
-                location.pathname === adminItem.href
+              className={`${location.pathname === adminItem.href
                   ? "text-blue-600 border-b-2 border-blue-600"
                   : "text-gray-700 hover:text-blue-600 hover:border-b-2 hover:border-blue-600"
-              } px-4 py-4 text-sm font-medium flex items-center space-x-2 transition-all duration-200 border-b-2 border-transparent`}
+                } px-4 py-4 text-sm font-medium flex items-center space-x-2 transition-all duration-200 border-b-2 border-transparent`}
             >
               <User className="h-5 w-5" />
               <span>Admin</span>
@@ -105,11 +103,10 @@ export function NavigationbarWithDropdownMultilevelMenu() {
                   key={item.name}
                   to={item.href}
                   onClick={() => setMobileMenuOpen(false)} // Close mobile menu on click
-                  className={`${
-                    isActive
+                  className={`${isActive
                       ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600"
                       : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                  } block px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3`}
+                    } block px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3`}
                 >
                   <Icon className="h-5 w-5" />
                   <span>{item.name}</span>
@@ -120,11 +117,10 @@ export function NavigationbarWithDropdownMultilevelMenu() {
             <Link
               to={adminItem.href}
               onClick={() => setMobileMenuOpen(false)} // Close mobile menu on click
-              className={`${
-                location.pathname === adminItem.href
+              className={`${location.pathname === adminItem.href
                   ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600"
                   : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-              } block px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3`}
+                } block px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3`}
             >
               <User className="h-5 w-5" />
               <span>Admin</span>

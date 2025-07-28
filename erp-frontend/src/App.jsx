@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { NavigationbarWithDropdownMultilevelMenu } from './components/Navbar';
 import Home from './pages/home';
-import Orders from './pages/order';
+import Orders from './pages/orders/order';
 import Transactions from './pages/transactions';
 import Inventory from './pages/inventory';
 import Admin from './pages/admin';
