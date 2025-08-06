@@ -5,7 +5,7 @@ import Home from './pages/home';
 import Orders from './pages/orders/order';
 import Transactions from './pages/transactions';
 import Inventory from './pages/inventory';
-import Attendance from './pages/attendance';
+import Employee from './pages/employee/employee';
 import Admin from './pages/admin';
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/inventory" element={<Inventory />} />
-          <Route path="/attendance" element={<Attendance />} />
+          <Route path="/attendance" element={<Employee />} />
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </div>
