@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Search, Download, Plus } from 'lucide-react';
+import AddEmployeeModal from './AddEmployeeModal';
 
 const EmployeeDetails = () => {
   const [searchTerm, setSearchTerm] = useState('');
-
-  // Simple 5 sample employees - managed within this component
-  const sampleEmployees = [
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [employees, setEmployees] = useState([
     {
       id: 'EMP001',
       name: 'John Doe',
@@ -51,14 +51,34 @@ const EmployeeDetails = () => {
       status: 'Active',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David'
     }
-  ];
+  ]);
 
   // Filter employees based on search term
-  const filteredEmployees = sampleEmployees.filter(employee =>
+  const filteredEmployees = employees.filter(employee =>
     employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     employee.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
     employee.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleAddEmployee = (e) => {
+    const formData = new FormData(e.target);
+    const newEmployee = {
+      id: formData.get('empCode'),
+      name: formData.get('name'),
+      email: formData.get('email') || '',
+      role: formData.get('role') || '',
+      contact: formData.get('contact') || '',
+      status: 'Active',
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(formData.get('name'))}`
+    };
+    
+    // Add the new employee to the list
+    setEmployees(prev => [...prev, newEmployee]);
+    setIsAddModalOpen(false);
+    
+    // You can add success notification here
+    console.log('New employee added:', newEmployee);
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -101,7 +121,10 @@ const EmployeeDetails = () => {
             </button>
 
             {/* New Employee Button */}
-            <button className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+            <button 
+              onClick={() => setIsAddModalOpen(true)}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            >
               <Plus className="h-4 w-4 mr-2" />
               New Employee
             </button>
@@ -170,6 +193,13 @@ const EmployeeDetails = () => {
           </table>
         </div>
       </div>
+
+      {/* Add Employee Modal */}
+      <AddEmployeeModal 
+        open={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleAddEmployee}
+      />
     </div>
   );
 };
