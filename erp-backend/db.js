@@ -1,12 +1,16 @@
-import pkg from 'pg'
-const { Pool } = pkg
-import dotenv from 'dotenv'
-dotenv.config()
+import pkg from 'pg';
+import dotenv from 'dotenv';
 
-export const pool = new Pool({
+dotenv.config();
+
+const { Pool } = pkg;
+
+const pool = new Pool({
   user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
   host: process.env.PGHOST,
-  port: process.env.PGPORT,
   database: process.env.PGDATABASE,
-})
+  password: process.env.PGPASSWORD,
+  port: process.env.PGPORT
+});
+
+export default pool;
