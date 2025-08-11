@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Download, Plus, Edit, Trash2 } from 'lucide-react';
 import AddEmployeeModal from './AddEmployeeModal';
-import { fetchEmployees } from '../../../api/employee.api'; // ✅ Import API
+import { fetchEmployees, getEmployee } from '../../../api/employee.api'; // ✅ Import API
 
 const EmployeeDetails = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -30,13 +32,26 @@ const EmployeeDetails = () => {
     }
   };
 
-  // Placeholder functions for action buttons (to be implemented later)
-  const handleEdit = (employeeId) => {
-    console.log(`Edit employee ${employeeId} functionality to be implemented`);
+  // Handle edit employee
+  const handleEdit = async (employeeId) => {
+    try {
+      const employee = await getEmployee(employeeId);
+      setEditingEmployee(employee);
+      setIsEditModalOpen(true);
+    } catch (error) {
+      console.error('Error fetching employee for edit:', error);
+      alert('Failed to load employee data for editing');
+    }
   };
 
   const handleDelete = (employeeId) => {
     console.log(`Delete employee ${employeeId} functionality to be implemented`);
+  };
+
+  // Close edit modal
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingEmployee(null);
   };
 
   // Filter employees based on search term
@@ -212,7 +227,16 @@ const EmployeeDetails = () => {
       <AddEmployeeModal
         open={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        refreshEmployees={loadEmployees} // ✅ Reload after adding
+        refreshEmployees={loadEmployees}
+      />
+
+      {/* Edit Employee Modal */}
+      <AddEmployeeModal
+        open={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        refreshEmployees={loadEmployees}
+        mode="edit"
+        initialData={editingEmployee}
       />
     </div>
   );

@@ -25,3 +25,78 @@ export const addEmployee = async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 };
+
+// Get single employee by emp_code
+export const getEmployee = async (req, res) => {
+  try {
+    const { emp_code } = req.params;
+    
+    const result = await pool.query('SELECT * FROM employees WHERE emp_code = $1', [emp_code]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Employee not found' 
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error fetching employee:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error',
+      error: error.message 
+    });
+  }
+};
+
+// Update employee by emp_code
+export const updateEmployee = async (req, res) => {
+  try {
+    const { emp_code } = req.params;
+    const { name, role, email, contact, joining_date, address } = req.body;
+    
+    // Check if employee exists
+    const checkResult = await pool.query('SELECT emp_code FROM employees WHERE emp_code = $1', [emp_code]);
+    
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Employee not found' 
+      });
+    }
+    
+    // Update employee
+    const updateResult = await pool.query(
+      `UPDATE employees 
+       SET name = $1, role = $2, email = $3, contact = $4, joining_date = $5, address = $6
+       WHERE emp_code = $7
+       RETURNING *`,
+      [name, role, email, contact, joining_date, address, emp_code]
+    );
+    
+    if (updateResult.rows.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Failed to update employee' 
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Employee updated successfully',
+      data: updateResult.rows[0]
+    });
+  } catch (error) {
+    console.error('Error updating employee:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error',
+      error: error.message 
+    });
+  }
+};

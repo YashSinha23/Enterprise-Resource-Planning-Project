@@ -60,3 +60,60 @@ export const addEmployee = async (employeeData) => {
     throw err;
   }
 };
+
+// Get single employee by emp_code
+export const getEmployee = async (empCode) => {
+  try {
+    const response = await fetch(`${API_URL}/${empCode}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch employee: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // If backend sends { success, data }, use data property, else assume it's the employee object
+    if (data && data.data) {
+      return data.data;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error("Error fetching employee:", error);
+    throw error;
+  }
+};
+
+// Update existing employee
+export const updateEmployee = async (empCode, employeeData) => {
+  try {
+    const response = await fetch(`${API_URL}/${empCode}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(employeeData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update employee: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // If backend sends { success, data }, use data property, else assume it's the employee object
+    if (data && data.data) {
+      return data.data;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error("Error updating employee:", error);
+    throw error;
+  }
+};
