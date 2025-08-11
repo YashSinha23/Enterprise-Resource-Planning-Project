@@ -1,15 +1,41 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import { addEmployee } from '../../../api/employee.api'; // ✅ Import API function
 
 /**
  * AddEmployeeModal - Popup card form for creating a new employee
  * Props:
  *   open (bool): Whether the modal is visible
  *   onClose (func): Function to close the modal
- *   onSubmit (func): Function to handle form submission
+ *   refreshEmployees (func): Function to reload employee list in parent
  */
-const AddEmployeeModal = ({ open, onClose, onSubmit }) => {
+const AddEmployeeModal = ({ open, onClose, refreshEmployees }) => {
   if (!open) return null;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    // Construct employee data object
+    const employeeData = {
+      emp_code: formData.get('empCode'),
+      name: formData.get('name'),
+      role: formData.get('role'),
+      contact: formData.get('contact'),
+      email: formData.get('email'),
+      address: formData.get('address'),
+      joining_date: formData.get('joiningDate')
+    };
+
+    try {
+      await addEmployee(employeeData); // ✅ Send to backend
+      alert("✅ Employee added successfully!");
+      if (refreshEmployees) refreshEmployees(); // reload table
+      onClose(); // close modal
+    } catch (err) {
+      alert("❌ Error adding employee: " + err.message);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
@@ -27,41 +53,21 @@ const AddEmployeeModal = ({ open, onClose, onSubmit }) => {
         <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Add New Employee</h2>
 
         {/* Form */}
-        <form
-          className="space-y-4"
-          onSubmit={e => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            
-            // Construct employee data object
-            const employeeData = {
-              empCode: formData.get('empCode'),
-              name: formData.get('name'),
-              role: formData.get('role'),
-              contact: formData.get('contact'),
-              email: formData.get('email'),
-              address: formData.get('address'),
-              joiningDate: formData.get('joiningDate')
-            };
-            
-            if (onSubmit) onSubmit(employeeData);
-          }}
-        >
-          {/* 2x2 Grid for Employee Code and Name */}
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Employee Code - Mandatory */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Employee Code <span className="text-red-500">*</span>
               </label>
-              <input 
-                type="text" 
-                name="empCode" 
+              <input
+                type="text"
+                name="empCode"
                 placeholder="0001"
                 pattern="[0-9]{4}"
                 maxLength="4"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                required 
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
               <p className="text-xs text-gray-500 mt-1">Format: 0001, 0002, 0003...</p>
             </div>
@@ -71,21 +77,21 @@ const AddEmployeeModal = ({ open, onClose, onSubmit }) => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Name <span className="text-red-500">*</span>
               </label>
-              <input 
-                type="text" 
-                name="name" 
+              <input
+                type="text"
+                name="name"
                 placeholder="John Doe"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                required 
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
 
             {/* Role */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-              <input 
-                type="text" 
-                name="role" 
+              <input
+                type="text"
+                name="role"
                 placeholder="Manager, Operator, Admin"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -94,33 +100,33 @@ const AddEmployeeModal = ({ open, onClose, onSubmit }) => {
             {/* Contact */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Contact</label>
-              <input 
-                type="tel" 
-                name="contact" 
+              <input
+                type="tel"
+                name="contact"
                 placeholder="+91 9876543210"
                 defaultValue="+91 "
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input 
-                type="email" 
-                name="email" 
+              <input
+                type="email"
+                name="email"
                 placeholder="john.doe@company.com"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             {/* Joining Date */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Joining Date</label>
-              <input 
-                type="date" 
-                name="joiningDate" 
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+              <input
+                type="date"
+                name="joiningDate"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -128,11 +134,11 @@ const AddEmployeeModal = ({ open, onClose, onSubmit }) => {
           {/* Address - Full Width */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-            <textarea 
-              name="address" 
-              rows={3} 
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" 
-              placeholder="Enter full address..." 
+            <textarea
+              name="address"
+              rows={3}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              placeholder="Enter full address..."
             />
           </div>
 
