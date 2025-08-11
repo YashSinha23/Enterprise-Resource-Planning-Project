@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { addEmployee, updateEmployee } from '../../../api/employee.api';
+import toast from 'react-hot-toast';
 
 const AddEmployeeModal = ({ 
   open, 
@@ -19,7 +20,6 @@ const AddEmployeeModal = ({
     address: ''
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   // Reset form when modal opens/closes or mode changes
   useEffect(() => {
@@ -47,7 +47,6 @@ const AddEmployeeModal = ({
           address: ''
         });
       }
-      setError(null);
     }
   }, [open, mode, initialData]);
 
@@ -61,16 +60,27 @@ const AddEmployeeModal = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    
+    if (!formData.name || !formData.emp_code) {
+      toast.error('Please fill in all required fields (Employee Code and Full Name)');
+      return;
+    }
 
     try {
+      setLoading(true);
+      
       if (mode === 'edit') {
         // Update existing employee
         await updateEmployee(initialData.emp_code, formData);
+        toast.success(`${formData.name} has been updated successfully`, {
+          icon: '✏️',
+        });
       } else {
         // Create new employee
         await addEmployee(formData);
+        toast.success(`${formData.name} has been added successfully`, {
+          icon: '👤',
+        });
       }
       
       // Refresh the employee list
@@ -83,13 +93,13 @@ const AddEmployeeModal = ({
       
       // Handle specific error types
       if (err.message.includes('already exists') || err.message.includes('DUPLICATE_EMP_CODE')) {
-        setError(`Employee code '${formData.emp_code}' is already taken. Please use a different employee code.`);
+        toast.error(`Employee code '${formData.emp_code}' is already taken. Please use a different code.`);
       } else if (err.message.includes('MISSING_REQUIRED_FIELDS')) {
-        setError('Please fill in all required fields (Employee Code and Full Name).');
+        toast.error('Please fill in all required fields (Employee Code and Full Name).');
       } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-        setError('Network error. Please check your internet connection and try again.');
+        toast.error('Network error. Please check your internet connection and try again.');
       } else {
-        setError(err.message || `Failed to ${mode === 'edit' ? 'update' : 'add'} employee. Please try again.`);
+        toast.error(err.message || `Failed to ${mode === 'edit' ? 'update' : 'add'} employee. Please try again.`);
       }
     } finally {
       setLoading(false);
@@ -120,13 +130,6 @@ const AddEmployeeModal = ({
           className="space-y-4"
           onSubmit={handleSubmit}
         >
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-md p-3">
-              <div className="text-red-800 text-sm">{error}</div>
-            </div>
-          )}
-
           {/* Employee Code - Full Width */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Employee Code *</label>

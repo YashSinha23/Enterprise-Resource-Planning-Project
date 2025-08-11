@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Download, Plus, Edit, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import AddEmployeeModal from './AddEmployeeModal';
 import { fetchEmployees, getEmployee, deleteEmployee } from '../../../api/employee.api'; // ✅ Import API
 
@@ -27,6 +28,7 @@ const EmployeeDetails = () => {
       console.error('Error loading employees:', err);
       setError('Failed to load employees');
       setEmployees([]);
+      toast.error('Failed to load employees');
     } finally {
       setLoading(false);
     }
@@ -40,44 +42,79 @@ const EmployeeDetails = () => {
       setIsEditModalOpen(true);
     } catch (error) {
       console.error('Error fetching employee for edit:', error);
-      alert('Failed to load employee data for editing');
+      toast.error('Failed to load employee data for editing');
     }
   };
 
+  // Handle delete employee with toast notifications
   const handleDelete = async (employeeId) => {
-    // Find the employee to get their name for confirmation
+    // Find employee name for confirmation
     const employee = employees.find(emp => emp.emp_code === employeeId);
-    const employeeName = employee?.name || employeeId;
-    
-    // Show confirmation dialog
-    const isConfirmed = window.confirm(
-      `Are you sure you want to delete employee "${employeeName}" (${employeeId})?\n\nThis action cannot be undone.`
-    );
-    
-    if (!isConfirmed) {
-      return; // User cancelled
-    }
-    
+    const employeeName = employee?.name || 'this employee';
+
+    // Show confirmation toast
+    toast((t) => (
+      <div className="flex flex-col">
+        <div className="flex items-center justify-between mb-3">
+          <span className="font-medium text-gray-900">Delete Employee</span>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            ×
+          </button>
+        </div>
+        <p className="text-sm text-gray-600 mb-4">
+          Are you sure you want to delete <strong>{employeeName}</strong>? This action cannot be undone.
+        </p>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => {
+              toast.dismiss(t.id);
+              confirmDelete(employeeId, employeeName);
+            }}
+            className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
+          >
+            Delete
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 bg-gray-300 text-gray-700 rounded text-sm hover:bg-gray-400 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: Infinity, // Keep toast open until user decides
+      style: {
+        background: '#fff',
+        color: '#000',
+        border: '1px solid #e5e7eb',
+        maxWidth: '400px',
+      },
+    });
+  };
+
+  // Confirm and execute delete
+  const confirmDelete = async (employeeId, employeeName) => {
     try {
-      setLoading(true);
+      // Show loading toast
+      const loadingToast = toast.loading('Deleting employee...');
+
       await deleteEmployee(employeeId);
-      
-      // Show success message
-      alert(`Employee "${employeeName}" has been deleted successfully.`);
-      
-      // Refresh the employee list
+
+      // Dismiss loading toast and show success
+      toast.dismiss(loadingToast);
+      toast.success(`${employeeName} has been deleted successfully`, {
+        icon: '🗑️',
+      });
+
+      // Refresh employee list
       await loadEmployees();
     } catch (error) {
       console.error('Error deleting employee:', error);
-      
-      // Show error message
-      if (error.message.includes('not found')) {
-        alert('Employee not found. It may have already been deleted.');
-      } else {
-        alert(`Failed to delete employee: ${error.message}`);
-      }
-    } finally {
-      setLoading(false);
+      toast.error('Failed to delete employee. Please try again.');
     }
   };
 
