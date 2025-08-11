@@ -115,3 +115,25 @@ export const updateEmployee = async (empCode, employeeData) => {
     throw error;
   }
 };
+
+// Delete employee
+export const deleteEmployee = async (empCode) => {
+  try {
+    const response = await fetch(`${API_URL}/${empCode}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete employee: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error deleting employee:", error);
+    throw error;
+  }
+};

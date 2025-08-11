@@ -139,3 +139,45 @@ export const updateEmployee = async (req, res) => {
     });
   }
 };
+
+// Delete employee by emp_code
+export const deleteEmployee = async (req, res) => {
+  try {
+    const { emp_code } = req.params;
+    
+    // Check if employee exists
+    const checkResult = await pool.query('SELECT * FROM employees WHERE emp_code = $1', [emp_code]);
+    
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Employee not found' 
+      });
+    }
+    
+    const employeeToDelete = checkResult.rows[0];
+    
+    // Delete employee
+    const deleteResult = await pool.query('DELETE FROM employees WHERE emp_code = $1', [emp_code]);
+    
+    if (deleteResult.rowCount === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Failed to delete employee' 
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: `Employee '${employeeToDelete.name}' (${emp_code}) has been deleted successfully`,
+      data: employeeToDelete
+    });
+  } catch (error) {
+    console.error('Error deleting employee:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error',
+      error: error.message 
+    });
+  }
+};

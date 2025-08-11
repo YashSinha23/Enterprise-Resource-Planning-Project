@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Download, Plus, Edit, Trash2 } from 'lucide-react';
 import AddEmployeeModal from './AddEmployeeModal';
-import { fetchEmployees, getEmployee } from '../../../api/employee.api'; // ✅ Import API
+import { fetchEmployees, getEmployee, deleteEmployee } from '../../../api/employee.api'; // ✅ Import API
 
 const EmployeeDetails = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,8 +44,41 @@ const EmployeeDetails = () => {
     }
   };
 
-  const handleDelete = (employeeId) => {
-    console.log(`Delete employee ${employeeId} functionality to be implemented`);
+  const handleDelete = async (employeeId) => {
+    // Find the employee to get their name for confirmation
+    const employee = employees.find(emp => emp.emp_code === employeeId);
+    const employeeName = employee?.name || employeeId;
+    
+    // Show confirmation dialog
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete employee "${employeeName}" (${employeeId})?\n\nThis action cannot be undone.`
+    );
+    
+    if (!isConfirmed) {
+      return; // User cancelled
+    }
+    
+    try {
+      setLoading(true);
+      await deleteEmployee(employeeId);
+      
+      // Show success message
+      alert(`Employee "${employeeName}" has been deleted successfully.`);
+      
+      // Refresh the employee list
+      await loadEmployees();
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+      
+      // Show error message
+      if (error.message.includes('not found')) {
+        alert('Employee not found. It may have already been deleted.');
+      } else {
+        alert(`Failed to delete employee: ${error.message}`);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Close edit modal

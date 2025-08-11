@@ -1,5 +1,5 @@
 import express from "express";
-import { getEmployees, addEmployee, getEmployee, updateEmployee } from "../controllers/employeeController.js";
+import { getEmployees, addEmployee, getEmployee, updateEmployee, deleteEmployee } from "../controllers/employeeController.js";
 
 const router = express.Router();
 
@@ -11,5 +11,8 @@ router.get('/:emp_code', getEmployee);
 
 // PUT update employee by emp_code
 router.put('/:emp_code', updateEmployee);
+
+// DELETE employee by emp_code
+router.delete('/:emp_code', deleteEmployee);
 
 export default router;

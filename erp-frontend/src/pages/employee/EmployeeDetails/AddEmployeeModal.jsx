@@ -100,25 +100,26 @@ const AddEmployeeModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl relative">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
           aria-label="Close"
         >
           <X className="h-6 w-6" />
         </button>
 
         {/* Modal Title */}
-        <div className="p-6 pb-4">
-          <h2 className="text-2xl font-bold text-gray-900 text-center">
-            {mode === 'edit' ? 'Edit Employee' : 'Add New Employee'}
-          </h2>
-        </div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+          {mode === 'edit' ? 'Edit Employee' : 'Add New Employee'}
+        </h2>
 
-        {/* Modal Body */}
-        <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4">
+        {/* Form */}
+        <form
+          className="space-y-4"
+          onSubmit={handleSubmit}
+        >
           {/* Error Message */}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-3">
@@ -126,20 +127,17 @@ const AddEmployeeModal = ({
             </div>
           )}
 
-          {/* Employee Code */}
+          {/* Employee Code - Full Width */}
           <div>
-            <label htmlFor="emp_code" className="block text-sm font-medium text-gray-700 mb-1">
-              Employee Code *
-            </label>
-            <input
+            <label className="block text-sm font-medium text-gray-700 mb-1">Employee Code *</label>
+            <input 
               type="text"
-              id="emp_code"
               name="emp_code"
               value={formData.emp_code}
               onChange={handleInputChange}
-              disabled={mode === 'edit'} // Don't allow editing emp_code
+              disabled={mode === 'edit'}
               required
-              className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${mode === 'edit' ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              className={`w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${mode === 'edit' ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               placeholder="Enter employee code"
             />
             {mode === 'edit' && (
@@ -151,102 +149,84 @@ const AddEmployeeModal = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name *
-              </label>
-              <input
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+              <input 
                 type="text"
-                id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter full name"
               />
             </div>
 
             {/* Role */}
             <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-                Role
-              </label>
-              <input
+              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <input 
                 type="text"
-                id="role"
                 name="role"
                 value={formData.role}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter role"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input 
                 type="email"
-                id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter email"
               />
             </div>
 
             {/* Contact */}
             <div>
-              <label htmlFor="contact" className="block text-sm font-medium text-gray-700 mb-1">
-                Contact
-              </label>
-              <input
+              <label className="block text-sm font-medium text-gray-700 mb-1">Contact</label>
+              <input 
                 type="text"
-                id="contact"
                 name="contact"
                 value={formData.contact}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter contact number"
               />
             </div>
 
             {/* Joining Date */}
             <div>
-              <label htmlFor="joining_date" className="block text-sm font-medium text-gray-700 mb-1">
-                Joining Date
-              </label>
-              <input
+              <label className="block text-sm font-medium text-gray-700 mb-1">Joining Date</label>
+              <input 
                 type="date"
-                id="joining_date"
                 name="joining_date"
                 value={formData.joining_date}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
           {/* Address - Full Width */}
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-              Address
-            </label>
-            <textarea
-              id="address"
+            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <textarea 
               name="address"
               value={formData.address}
               onChange={handleInputChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               placeholder="Enter address"
             />
           </div>
 
-          {/* Modal Footer */}
+          {/* Submit Button */}
           <div className="flex justify-end pt-4">
             <button
               type="button"
