@@ -37,27 +37,25 @@ export const fetchEmployees = async () => {
  */
 export const addEmployee = async (employeeData) => {
   try {
-    const res = await fetch(API_URL, {
+    const response = await fetch(`${API_URL}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(employeeData),
     });
 
-    if (!res.ok) {
-      throw new Error(`Server error: ${res.status} ${res.statusText}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      // Throw error with the message from backend
+      throw new Error(data.message || `HTTP error! status: ${response.status}`);
     }
 
-    const data = await res.json();
-
-    // If backend sends { success, data }, return that
-    if (data && data.data) {
-      return data.data;
-    }
-
-    return data; // Assume it's the created record
-  } catch (err) {
-    console.error("Error adding employee:", err);
-    throw err;
+    return data.data || data;
+  } catch (error) {
+    console.error("Error adding employee:", error);
+    throw error;
   }
 };
 

@@ -14,6 +14,20 @@ export const getEmployees = async (req, res) => {
 export const addEmployee = async (req, res) => {
     const { emp_code, name, role, contact, email, address, joining_date } = req.body;
     try {
+        // First check if employee code already exists
+        const existingEmployee = await pool.query(
+            'SELECT emp_code FROM employees WHERE emp_code = $1',
+            [emp_code]
+        );
+
+        if (existingEmployee.rows.length > 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `Employee with code '${emp_code}' already exists. Please use a different employee code.`,
+                error: 'DUPLICATE_EMP_CODE'
+            });
+        }
+
         const result = await pool.query(
             `INSERT INTO employees (emp_code, name, role, contact, email, address, joining_date)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -22,7 +36,32 @@ export const addEmployee = async (req, res) => {
         );
         res.json({ success: true, data: result.rows[0] });
     } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+        console.error('Error adding employee:', err);
+        
+        // Handle different types of database errors
+        if (err.code === '23505') { // PostgreSQL unique violation error code
+            return res.status(400).json({ 
+                success: false, 
+                message: `Employee with code '${emp_code}' already exists. Please use a different employee code.`,
+                error: 'DUPLICATE_EMP_CODE'
+            });
+        }
+        
+        // Handle other validation errors
+        if (err.code === '23502') { // PostgreSQL not null violation
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Required fields are missing. Please fill in all mandatory fields.',
+                error: 'MISSING_REQUIRED_FIELDS'
+            });
+        }
+        
+        // Generic error for other cases
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to add employee. Please try again.',
+            error: err.message 
+        });
     }
 };
 

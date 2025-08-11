@@ -80,7 +80,17 @@ const AddEmployeeModal = ({
       onClose();
     } catch (err) {
       console.error(`Error ${mode === 'edit' ? 'updating' : 'creating'} employee:`, err);
-      setError(err.message || `Failed to ${mode === 'edit' ? 'update' : 'create'} employee`);
+      
+      // Handle specific error types
+      if (err.message.includes('already exists') || err.message.includes('DUPLICATE_EMP_CODE')) {
+        setError(`Employee code '${formData.emp_code}' is already taken. Please use a different employee code.`);
+      } else if (err.message.includes('MISSING_REQUIRED_FIELDS')) {
+        setError('Please fill in all required fields (Employee Code and Full Name).');
+      } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        setError('Network error. Please check your internet connection and try again.');
+      } else {
+        setError(err.message || `Failed to ${mode === 'edit' ? 'update' : 'add'} employee. Please try again.`);
+      }
     } finally {
       setLoading(false);
     }
