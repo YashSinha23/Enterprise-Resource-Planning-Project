@@ -109,27 +109,42 @@ const AddEmployeeModal = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 relative max-h-[90vh] overflow-y-auto">
-        {/* Close Button */}
-        <button
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-          onClick={onClose}
-          aria-label="Close"
-        >
-          <X className="h-6 w-6" />
-        </button>
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
+      ></div>
+      
+      {/* Modal */}
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="relative bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
+          {/* Close Button */}
+          <button
+            className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg transition-colors z-10"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <X className="h-5 w-5 text-gray-400" />
+          </button>
 
-        {/* Modal Title */}
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          {mode === 'edit' ? 'Edit Employee' : 'Add New Employee'}
-        </h2>
+          {/* Modal Title */}
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-900 text-center pr-8">
+              {mode === 'edit' ? 'Edit Employee' : 'Add New Employee'}
+            </h2>
+          </div>
 
-        {/* Form */}
-        <form
-          className="space-y-4"
-          onSubmit={handleSubmit}
-        >
+          {/* Form Content */}
+          <div className="p-6">
+            <form
+              className="space-y-4"
+              onSubmit={handleSubmit}
+            >
           {/* Employee Code - Full Width */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Employee Code *</label>
@@ -229,24 +244,26 @@ const AddEmployeeModal = ({
             />
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-end pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="mr-3 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Saving...' : (mode === 'edit' ? 'Update Employee' : 'Add Employee')}
-            </button>
+              {/* Submit Button */}
+              <div className="flex justify-end pt-4">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="mr-3 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Saving...' : (mode === 'edit' ? 'Update Employee' : 'Add Employee')}
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
