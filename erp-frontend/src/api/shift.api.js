@@ -29,3 +29,17 @@ export async function getAllShifts() {
   }
   return response.json();
 }
+
+export async function deleteShift(shiftId) {
+  const response = await fetch(`${API_URL}/${shiftId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete shift');
+  }
+  return response.json();
+}

@@ -1,5 +1,5 @@
 import express from 'express';
-import { addShift, getAllShifts } from '../controllers/shiftController.js';
+import { addShift, getAllShifts, deleteShift } from '../controllers/shiftController.js';
 
 const router = express.Router();
 
@@ -8,5 +8,8 @@ router.get('/', getAllShifts);
 
 // Add new shift
 router.post('/', addShift);
+
+// Delete shift
+router.delete('/:id', deleteShift);
 
 export default router;

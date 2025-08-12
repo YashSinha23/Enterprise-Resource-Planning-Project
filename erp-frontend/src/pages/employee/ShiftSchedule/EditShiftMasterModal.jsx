@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { addShift, getAllShifts } from '../../../api/shift.api';
-import { X, Edit3, Plus, ArrowLeft } from 'lucide-react';
+import { addShift, getAllShifts, deleteShift } from '../../../api/shift.api';
+import { X, Edit3, Plus, ArrowLeft, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 
@@ -84,6 +84,73 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
   const handleEditShift = (shiftId) => {
     console.log(`Edit shift: ${shiftId}`);
     // This will be implemented later
+  };
+
+  const handleDeleteShift = (shift) => {
+    const shiftCode = shift.shift_code;
+    const shiftName = shift.shift_name;
+    
+    // Show confirmation toast
+    toast((t) => (
+      <div className="flex flex-col space-y-3">
+        <div className="flex items-center space-x-2">
+          <Trash2 className="h-5 w-5 text-red-600" />
+          <span className="font-medium text-gray-900">Delete Shift</span>
+        </div>
+        <p className="text-sm text-gray-600">
+          Are you sure you want to delete "{shiftName}"? This action cannot be undone.
+        </p>
+        <div className="flex space-x-2">
+          <button
+            className="px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+            onClick={() => toast.dismiss(t.id)}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-3 py-1 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            onClick={async () => {
+              toast.dismiss(t.id);
+              await confirmDeleteShift(shiftCode, shiftName);
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: Infinity, // Keep toast open until user decides
+      style: {
+        background: '#fff',
+        color: '#000',
+        border: '1px solid #e5e7eb',
+        borderRadius: '8px',
+        padding: '16px',
+        minWidth: '300px',
+      },
+    });
+  };
+
+  const confirmDeleteShift = async (shiftCode, shiftName) => {
+    try {
+      // Show loading toast
+      const loadingToast = toast.loading('Deleting shift...');
+      
+      await deleteShift(shiftCode);
+      
+      // Dismiss loading toast and show success
+      toast.dismiss(loadingToast);
+      toast.success(`"${shiftName}" has been deleted successfully`, {
+        icon: '🗑️',
+        duration: 3000,
+      });
+      
+      // Refresh the shifts list
+      await fetchShifts();
+    } catch (err) {
+      console.error('Error deleting shift:', err);
+      toast.error('Failed to delete shift. Please try again.');
+    }
   };
 
   const handleAddNewShift = () => {
@@ -202,13 +269,13 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
                   </div>
                 ) : shifts.length > 0 ? (
                   <div className="space-y-4">
-                    {shifts.map((shift) => {
+                    {shifts.map((shift, index) => {
                       const colors = getShiftColors(shift.shift_code, shift.shift_name);
                       const timeRange = `${formatTime(shift.start_time)} - ${formatTime(shift.end_time)}`;
                       
                       return (
                         <div
-                          key={shift.id}
+                          key={shift.shift_code || `shift-${index}`}
                           className={`p-4 rounded-lg border ${colors.bgColor} ${colors.borderColor}`}
                         >
                           <div className="flex items-center justify-between">
@@ -220,12 +287,22 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
                               </div>
                               <p className="text-sm text-gray-600">{timeRange}</p>
                             </div>
-                            <button
-                              onClick={() => handleEditShift(shift.id)}
-                              className="p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors"
-                            >
-                              <Edit3 className="h-4 w-4 text-gray-600" />
-                            </button>
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleEditShift(shift.shift_code)}
+                                className="p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors"
+                                title="Edit shift"
+                              >
+                                <Edit3 className="h-4 w-4 text-gray-600" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteShift(shift)}
+                                className="p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors"
+                                title="Delete shift"
+                              >
+                                <Trash2 className="h-4 w-4 text-red-600" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       );

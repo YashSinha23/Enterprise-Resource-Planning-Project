@@ -28,3 +28,23 @@ export const addShift = async (req, res) => {
     res.status(500).json({ success: false, error: 'Database error.' });
   }
 };
+
+export const deleteShift = async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).json({ success: false, error: 'Shift code is required.' });
+  }
+  try {
+    const result = await pool.query(
+      'DELETE FROM shifts WHERE shift_code = $1 RETURNING *',
+      [id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Shift not found.' });
+    }
+    res.json({ success: true, message: 'Shift deleted successfully', shift: result.rows[0] });
+  } catch (err) {
+    console.error('Error deleting shift:', err);
+    res.status(500).json({ success: false, error: 'Database error.' });
+  }
+};
