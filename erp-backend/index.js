@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import pool from "./db.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
+import shiftRoutes from "./routes/shiftRoutes.js";
 
 dotenv.config();
 
@@ -31,6 +32,9 @@ app.get("/api/test-db", async (req, res) => {
 
 // Employee routes
 app.use("/api/employees", employeeRoutes);
+
+// Shift routes
+app.use("/api/shifts", shiftRoutes);
 
 // 404 handler for unmatched routes
 app.use((req, res) => {

@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
+import { addShift } from '../../../api/shift.api';
 import { X, Edit3, Plus, ArrowLeft } from 'lucide-react';
+import toast from 'react-hot-toast';
+
 
 const EditShiftMasterModal = ({ isOpen, onClose }) => {
   const [showAddForm, setShowAddForm] = useState(false);
+
   const [formData, setFormData] = useState({
     shiftCode: '',
     shiftName: '',
     startTime: '',
     endTime: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
 
   if (!isOpen) return null;
 
@@ -68,10 +75,35 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
     }));
   };
 
-  const handleSaveShift = () => {
-    console.log('Save new shift:', formData);
-    // This will handle saving the new shift
-    handleBackToList();
+
+
+  const handleSaveShift = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      await addShift(formData);
+      toast.success(`Shift "${formData.shiftName}" has been added successfully`, {
+        icon: '🕒',
+      });
+      handleBackToList();
+    } catch (err) {
+      console.error('Error adding shift:', err);
+      
+      // Handle specific error types
+      if (err.message.includes('already exists') || err.message.includes('DUPLICATE')) {
+        toast.error(`Shift code '${formData.shiftCode}' is already taken. Please use a different code.`);
+      } else if (err.message.includes('MISSING_REQUIRED_FIELDS')) {
+        toast.error('Please fill in all required fields.');
+      } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        toast.error('Network error. Please check your internet connection and try again.');
+      } else {
+        toast.error(err.message || 'Failed to add shift. Please try again.');
+      }
+      
+      setError(err.message || 'Failed to add shift');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBackdropClick = (e) => {
@@ -124,6 +156,9 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
 
           {/* Content */}
           <div className="p-6 flex-1 overflow-y-auto">
+            {error && (
+              <div className="mb-4 text-red-600 bg-red-50 border border-red-200 rounded p-2 text-sm">{error}</div>
+            )}
             {!showAddForm ? (
               // Shift List View
               <>
@@ -271,10 +306,10 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
                 </button>
                 <button
                   onClick={handleSaveShift}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  disabled={!formData.shiftCode || !formData.shiftName || !formData.startTime || !formData.endTime}
+                  className={`px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
+                  disabled={loading || !formData.shiftCode || !formData.shiftName || !formData.startTime || !formData.endTime}
                 >
-                  Add Shift
+                  {loading ? 'Adding...' : 'Add Shift'}
                 </button>
               </>
             )}
