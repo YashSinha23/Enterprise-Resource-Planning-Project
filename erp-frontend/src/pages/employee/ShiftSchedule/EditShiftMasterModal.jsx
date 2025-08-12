@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { addShift } from '../../../api/shift.api';
+import React, { useState, useEffect } from 'react';
+import { addShift, getAllShifts } from '../../../api/shift.api';
 import { X, Edit3, Plus, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -15,39 +15,71 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [shifts, setShifts] = useState([]);
+  const [fetchingShifts, setFetchingShifts] = useState(false);
 
+  // Fetch shifts when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      fetchShifts();
+    }
+  }, [isOpen]);
+
+  const fetchShifts = async () => {
+    setFetchingShifts(true);
+    try {
+      const response = await getAllShifts();
+      setShifts(response.shifts || []);
+    } catch (err) {
+      console.error('Error fetching shifts:', err);
+      toast.error('Failed to load shifts');
+    } finally {
+      setFetchingShifts(false);
+    }
+  };
+
+  // Function to format time from 24-hour to 12-hour format
+  const formatTime = (time24) => {
+    if (!time24) return '';
+    const [hours, minutes] = time24.split(':');
+    const hour12 = parseInt(hours) % 12 || 12;
+    const ampm = parseInt(hours) >= 12 ? 'PM' : 'AM';
+    return `${hour12}:${minutes} ${ampm}`;
+  };
+
+  // Function to get shift colors based on shift code or name
+  const getShiftColors = (shiftCode, shiftName) => {
+    const code = shiftCode?.toUpperCase();
+    const name = shiftName?.toLowerCase();
+    
+    if (code === 'M' || name?.includes('morning')) {
+      return {
+        bgColor: 'bg-blue-50',
+        textColor: 'text-blue-700',
+        borderColor: 'border-blue-200'
+      };
+    } else if (code === 'A' || name?.includes('afternoon') || name?.includes('evening')) {
+      return {
+        bgColor: 'bg-yellow-50',
+        textColor: 'text-yellow-700',
+        borderColor: 'border-yellow-200'
+      };
+    } else if (code === 'N' || name?.includes('night')) {
+      return {
+        bgColor: 'bg-blue-50',
+        textColor: 'text-blue-700',
+        borderColor: 'border-blue-200'
+      };
+    } else {
+      return {
+        bgColor: 'bg-gray-50',
+        textColor: 'text-gray-700',
+        borderColor: 'border-gray-200'
+      };
+    }
+  };
 
   if (!isOpen) return null;
-
-  const shifts = [
-    {
-      id: 'morning',
-      name: 'Morning Shift (M)',
-      timeRange: '08:00 AM - 04:00 PM',
-      color: 'blue',
-      bgColor: 'bg-blue-50',
-      textColor: 'text-blue-700',
-      borderColor: 'border-blue-200'
-    },
-    {
-      id: 'afternoon',
-      name: 'Afternoon Shift (A)',
-      timeRange: '04:00 PM - 12:00 AM',
-      color: 'yellow',
-      bgColor: 'bg-yellow-50',
-      textColor: 'text-yellow-700',
-      borderColor: 'border-yellow-200'
-    },
-    {
-      id: 'night',
-      name: 'Night Shift (N)',
-      timeRange: '12:00 AM - 08:00 AM',
-      color: 'blue',
-      bgColor: 'bg-blue-50',
-      textColor: 'text-blue-700',
-      borderColor: 'border-blue-200'
-    }
-  ];
 
   const handleEditShift = (shiftId) => {
     console.log(`Edit shift: ${shiftId}`);
@@ -86,6 +118,8 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
         icon: '🕒',
       });
       handleBackToList();
+      // Refresh the shifts list
+      await fetchShifts();
     } catch (err) {
       console.error('Error adding shift:', err);
       
@@ -162,31 +196,47 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
             {!showAddForm ? (
               // Shift List View
               <>
-                <div className="space-y-4">
-                  {shifts.map((shift) => (
-                    <div
-                      key={shift.id}
-                      className={`p-4 rounded-lg border ${shift.bgColor} ${shift.borderColor}`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <h4 className={`font-medium ${shift.textColor}`}>
-                              {shift.name}
-                            </h4>
-                          </div>
-                          <p className="text-sm text-gray-600">{shift.timeRange}</p>
-                        </div>
-                        <button
-                          onClick={() => handleEditShift(shift.id)}
-                          className="p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors"
+                {fetchingShifts ? (
+                  <div className="flex justify-center items-center py-8">
+                    <div className="text-gray-500">Loading shifts...</div>
+                  </div>
+                ) : shifts.length > 0 ? (
+                  <div className="space-y-4">
+                    {shifts.map((shift) => {
+                      const colors = getShiftColors(shift.shift_code, shift.shift_name);
+                      const timeRange = `${formatTime(shift.start_time)} - ${formatTime(shift.end_time)}`;
+                      
+                      return (
+                        <div
+                          key={shift.id}
+                          className={`p-4 rounded-lg border ${colors.bgColor} ${colors.borderColor}`}
                         >
-                          <Edit3 className="h-4 w-4 text-gray-600" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <h4 className={`font-medium ${colors.textColor}`}>
+                                  {shift.shift_name} ({shift.shift_code})
+                                </h4>
+                              </div>
+                              <p className="text-sm text-gray-600">{timeRange}</p>
+                            </div>
+                            <button
+                              onClick={() => handleEditShift(shift.id)}
+                              className="p-2 hover:bg-white hover:bg-opacity-50 rounded-lg transition-colors"
+                            >
+                              <Edit3 className="h-4 w-4 text-gray-600" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-gray-500 mb-2">No shifts found</div>
+                    <div className="text-sm text-gray-400">Add your first shift to get started</div>
+                  </div>
+                )}
 
                 {/* Add New Shift Button */}
                 <div className="mt-6">
