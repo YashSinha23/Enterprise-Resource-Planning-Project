@@ -83,11 +83,7 @@ const ShiftSchedule = () => {
           </button>
           <div className="flex items-center space-x-2">
             <h2 className="text-xl font-semibold text-gray-900">{currentMonthDisplay}</h2>
-            {isCurrentMonthPast() && (
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                Read Only
-              </span>
-            )}
+            {/* Read Only label removed as per user request */}
           </div>
           <button
             onClick={() => navigateMonth('next')}
@@ -190,6 +186,7 @@ const ShiftSchedule = () => {
                     const diffDays = Math.floor((cellDate - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / (1000 * 60 * 60 * 24));
                     // Editable if today (0), yesterday (-1), or future (>0)
                     const isEditable = diffDays >= -1;
+                    const cellDateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
                     return (
                       <td key={day} className="px-1 py-4 text-center w-12">
                         <div className="flex justify-center">
@@ -199,7 +196,8 @@ const ShiftSchedule = () => {
                             onShiftChange={updateShift}
                             employeeId={employee.emp_code || employee.id}
                             day={day}
-                            isReadOnly={!isEditable}
+                            isReadOnly={false}
+                            cellDateObj={cellDateObj}
                           />
                         </div>
                       </td>

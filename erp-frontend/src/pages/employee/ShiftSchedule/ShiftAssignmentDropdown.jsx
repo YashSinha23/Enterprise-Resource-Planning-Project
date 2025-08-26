@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getShiftColors } from './shiftUtils';
+import toast from 'react-hot-toast';
 
 const ShiftAssignmentDropdown = ({ 
   currentShift, 
@@ -7,7 +8,8 @@ const ShiftAssignmentDropdown = ({
   onShiftChange, 
   employeeId, 
   day,
-  isReadOnly = false 
+  isReadOnly = false,
+  cellDateObj
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -25,8 +27,55 @@ const ShiftAssignmentDropdown = ({
     };
   }, []);
 
+
   const handleShiftSelect = (shiftCode) => {
-    if (isReadOnly) return;
+    // Determine if this is a previous date
+    const today = new Date();
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const cellDate = cellDateObj ? new Date(cellDateObj.getFullYear(), cellDateObj.getMonth(), cellDateObj.getDate()) : todayDate;
+    const isPast = cellDate < todayDate;
+    if (isPast) {
+      toast((t) => (
+        <div className="flex flex-col space-y-3">
+          <div className="flex items-center space-x-2">
+            <span className="font-medium text-gray-900">Edit Past Date</span>
+          </div>
+          <p className="text-sm text-gray-600">
+            You are editing a previous date. Are you sure you want to update this shift?
+          </p>
+          <div className="flex space-x-2">
+            <button
+              className="px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+              onClick={() => {
+                toast.dismiss(t.id);
+                onShiftChange(employeeId, day, shiftCode);
+                setIsOpen(false);
+              }}
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      ), {
+        duration: Infinity,
+        style: {
+          background: '#fff',
+          color: '#000',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          padding: '16px',
+          minWidth: '300px',
+        },
+      });
+      setIsOpen(false);
+      return;
+    }
     onShiftChange(employeeId, day, shiftCode);
     setIsOpen(false);
   };

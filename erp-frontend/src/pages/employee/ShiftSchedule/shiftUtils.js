@@ -35,9 +35,9 @@ export const getShiftColors = (shiftCode) => {
       };
     case 'N':
       return {
-        bgColor: 'bg-gray-100',
-        textColor: 'text-gray-800',
-        borderColor: 'border-gray-300'
+        bgColor: 'bg-gray-700',
+        textColor: 'text-gray-100',
+        borderColor: 'border-gray-800'
       };
     case 'A':
       return {
