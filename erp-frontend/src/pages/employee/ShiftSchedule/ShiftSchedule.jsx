@@ -184,7 +184,12 @@ const ShiftSchedule = () => {
                   {days.map((day) => {
                     const scheduleKey = `${employee.emp_code || employee.id}_${format(currentDate, 'yyyy-MM')}_${day}`;
                     const shiftCode = scheduleData[scheduleKey] || '';
-                    
+                    // Calculate if this cell is editable: today, yesterday, or future
+                    const today = new Date();
+                    const cellDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+                    const diffDays = Math.floor((cellDate - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / (1000 * 60 * 60 * 24));
+                    // Editable if today (0), yesterday (-1), or future (>0)
+                    const isEditable = diffDays >= -1;
                     return (
                       <td key={day} className="px-1 py-4 text-center w-12">
                         <div className="flex justify-center">
@@ -194,7 +199,7 @@ const ShiftSchedule = () => {
                             onShiftChange={updateShift}
                             employeeId={employee.emp_code || employee.id}
                             day={day}
-                            isReadOnly={isCurrentMonthPast()}
+                            isReadOnly={!isEditable}
                           />
                         </div>
                       </td>

@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import pool from "./db.js";
 import employeeRoutes from "./routes/employeeRoutes.js";
 import shiftRoutes from "./routes/shiftRoutes.js";
+import shiftScheduleRoutes from "./routes/shiftScheduleRoutes.js";
 
 dotenv.config();
 
@@ -35,6 +36,9 @@ app.use("/api/employees", employeeRoutes);
 
 // Shift routes
 app.use("/api/shifts", shiftRoutes);
+
+// Shift schedule routes
+app.use("/api/shift-schedules", shiftScheduleRoutes);
 
 // 404 handler for unmatched routes
 app.use((req, res) => {
