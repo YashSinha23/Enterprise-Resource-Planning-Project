@@ -5,6 +5,8 @@ import { X, Plus, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ShiftList from './ShiftList';
 import ShiftForm from './ShiftForm';
+import { formatTime, getShiftColors } from './shiftUtils';
+import { createDeleteShiftToast } from './DeleteShiftToast';
 
 
 const EditShiftMasterModal = ({ isOpen, onClose }) => {
@@ -41,107 +43,6 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
     }
   };
 
-  // Function to format time from 24-hour to 12-hour format
-  const formatTime = (time24) => {
-    if (!time24) return '';
-    const [hours, minutes] = time24.split(':');
-    const hour12 = parseInt(hours) % 12 || 12;
-    const ampm = parseInt(hours) >= 12 ? 'PM' : 'AM';
-    return `${hour12}:${minutes} ${ampm}`;
-  };
-
-  // Function to generate consistent colors based on shift code
-  const getShiftColors = (shiftCode) => {
-    if (!shiftCode) {
-      return {
-        bgColor: 'bg-gray-50',
-        textColor: 'text-gray-700',
-        borderColor: 'border-gray-200'
-      };
-    }
-
-    // Define specific colors for each shift code
-    const code = shiftCode.toUpperCase();
-    
-    switch (code) {
-      case 'G':
-        return {
-          bgColor: 'bg-yellow-50',
-          textColor: 'text-yellow-800',
-          borderColor: 'border-yellow-200'
-        };
-      case 'D':
-        return {
-          bgColor: 'bg-red-50',
-          textColor: 'text-red-800',
-          borderColor: 'border-red-200'
-        };
-      case 'N':
-        return {
-          bgColor: 'bg-gray-100',
-          textColor: 'text-gray-800',
-          borderColor: 'border-gray-300'
-        };
-      case 'A':
-        return {
-          bgColor: 'bg-green-50',
-          textColor: 'text-green-800',
-          borderColor: 'border-green-200'
-        };
-      case 'B':
-        return {
-          bgColor: 'bg-purple-50',
-          textColor: 'text-purple-800',
-          borderColor: 'border-purple-200'
-        };
-      case 'C':
-        return {
-          bgColor: 'bg-blue-50',
-          textColor: 'text-blue-800',
-          borderColor: 'border-blue-200'
-        };
-      default:
-        // Fallback colors for any other shift codes
-        const fallbackColors = [
-          {
-            bgColor: 'bg-indigo-50',
-            textColor: 'text-indigo-800',
-            borderColor: 'border-indigo-200'
-          },
-          {
-            bgColor: 'bg-teal-50',
-            textColor: 'text-teal-800',
-            borderColor: 'border-teal-200'
-          },
-          {
-            bgColor: 'bg-orange-50',
-            textColor: 'text-orange-800',
-            borderColor: 'border-orange-200'
-          },
-          {
-            bgColor: 'bg-pink-50',
-            textColor: 'text-pink-800',
-            borderColor: 'border-pink-200'
-          },
-          {
-            bgColor: 'bg-cyan-50',
-            textColor: 'text-cyan-800',
-            borderColor: 'border-cyan-200'
-          }
-        ];
-
-        // Use hash function for any other shift codes not explicitly defined
-        let hash = 0;
-        for (let i = 0; i < shiftCode.length; i++) {
-          const char = shiftCode.charCodeAt(i);
-          hash = ((hash << 5) - hash) + char;
-          hash = hash & hash;
-        }
-        const colorIndex = Math.abs(hash) % fallbackColors.length;
-        return fallbackColors[colorIndex];
-    }
-  };
-
   if (!isOpen) return null;
 
   const handleEditShift = (shiftId) => {
@@ -153,45 +54,7 @@ const EditShiftMasterModal = ({ isOpen, onClose }) => {
     const shiftCode = shift.shift_code;
     const shiftName = shift.shift_name;
     
-    // Show confirmation toast
-    toast((t) => (
-      <div className="flex flex-col space-y-3">
-        <div className="flex items-center space-x-2">
-          <Trash2 className="h-5 w-5 text-red-600" />
-          <span className="font-medium text-gray-900">Delete Shift</span>
-        </div>
-        <p className="text-sm text-gray-600">
-          Are you sure you want to delete "{shiftName}"? This action cannot be undone.
-        </p>
-        <div className="flex space-x-2">
-          <button
-            className="px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-            onClick={() => toast.dismiss(t.id)}
-          >
-            Cancel
-          </button>
-          <button
-            className="px-3 py-1 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-            onClick={async () => {
-              toast.dismiss(t.id);
-              await confirmDeleteShift(shiftCode, shiftName);
-            }}
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    ), {
-      duration: Infinity, // Keep toast open until user decides
-      style: {
-        background: '#fff',
-        color: '#000',
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px',
-        padding: '16px',
-        minWidth: '300px',
-      },
-    });
+    createDeleteShiftToast(shiftName, () => confirmDeleteShift(shiftCode, shiftName));
   };
 
   const confirmDeleteShift = async (shiftCode, shiftName) => {
