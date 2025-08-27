@@ -14,13 +14,13 @@ export const getAllShifts = async (req, res) => {
 
 export const addShift = async (req, res) => {
   const { shiftCode, shiftName, startTime, endTime } = req.body;
-  if (!shiftCode || !shiftName || !startTime || !endTime) {
+  if (!shiftCode || !shiftName || (shiftCode !== 'OFF' && (!startTime || !endTime))) {
     return res.status(400).json({ success: false, error: 'All fields are required.' });
   }
   try {
     const result = await pool.query(
       'INSERT INTO shifts (shift_code, shift_name, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING *',
-      [shiftCode, shiftName, startTime, endTime]
+      [shiftCode, shiftName, shiftCode === 'OFF' ? null : startTime, shiftCode === 'OFF' ? null : endTime]
     );
     res.status(201).json({ success: true, shift: result.rows[0] });
   } catch (err) {

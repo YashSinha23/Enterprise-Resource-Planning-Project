@@ -10,9 +10,10 @@ const ShiftForm = ({ formData, onInputChange, onSubmit, loading }) => (
       <input
         type="text"
         value={formData.shiftCode}
-        onChange={e => onInputChange('shiftCode', e.target.value)}
-        placeholder="e.g., M, A, N, E"
+        onChange={e => onInputChange('shiftCode', e.target.value.toUpperCase())}
+        placeholder="e.g., M, A, N, E, OFF"
         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        maxLength={6}
       />
     </div>
     {/* Shift Name */}
@@ -24,7 +25,7 @@ const ShiftForm = ({ formData, onInputChange, onSubmit, loading }) => (
         type="text"
         value={formData.shiftName}
         onChange={e => onInputChange('shiftName', e.target.value)}
-        placeholder="e.g., Morning Shift, Evening Shift"
+        placeholder="e.g., Morning Shift, Evening Shift, Off/Leave"
         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       />
     </div>
@@ -44,7 +45,8 @@ const ShiftForm = ({ formData, onInputChange, onSubmit, loading }) => (
           value={formData.startTime}
           onChange={e => onInputChange('startTime', e.target.value)}
           className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          required
+          required={formData.shiftCode !== 'OFF'}
+          disabled={formData.shiftCode === 'OFF'}
         />
       </div>
     </div>
@@ -64,7 +66,8 @@ const ShiftForm = ({ formData, onInputChange, onSubmit, loading }) => (
           value={formData.endTime}
           onChange={e => onInputChange('endTime', e.target.value)}
           className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-          required
+          required={formData.shiftCode !== 'OFF'}
+          disabled={formData.shiftCode === 'OFF'}
         />
       </div>
     </div>
