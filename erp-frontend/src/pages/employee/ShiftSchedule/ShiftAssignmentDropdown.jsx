@@ -105,11 +105,9 @@ const ShiftAssignmentDropdown = ({
                 <button
                   key={shift.shift_code}
                   onClick={() => handleShiftSelect(shift.shift_code)}
-                  className="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 border border-gray-200 transition-colors group"
+                  className={`flex items-center justify-center rounded-full border transition-colors group shadow-sm mb-1 w-full h-10 min-w-[80px] max-w-[120px] px-4 ${colors.bgColor} ${colors.textColor} ${colors.borderColor}`}
                 >
-                  <div className={`w-6 h-6 ${colors.bgColor} border-2 ${colors.borderColor} rounded-full mb-2`}></div>
-                  <span className="text-xs font-medium text-gray-700">{shift.shift_code}</span>
-                  <span className="text-xs text-gray-500">{shift.shift_name}</span>
+                  <span className="text-sm font-semibold">{shift.shift_code}</span>
                 </button>
               );
             })}
