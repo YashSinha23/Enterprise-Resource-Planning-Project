@@ -146,7 +146,7 @@ const ShiftSchedule = () => {
           <table className="w-full table-fixed">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-60">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-60 sticky left-0 z-10 bg-gray-50 border-r border-gray-200">
                   Employee
                 </th>
                 {days.map((day) => (
@@ -162,7 +162,7 @@ const ShiftSchedule = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {employees.map((employee, index) => (
                 <tr key={employee.emp_code || employee.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="px-6 py-4 whitespace-nowrap w-60">
+                  <td className="px-6 py-4 whitespace-nowrap w-60 sticky left-0 z-10 bg-white border-r border-gray-200">
                     <div className="flex items-center space-x-3">
                       <div className="flex-shrink-0 h-10 w-10">
                         <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
